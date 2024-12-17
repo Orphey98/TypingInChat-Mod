@@ -10,7 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import java.util.List;
 
-public class AreYouTypingModClient implements ClientModInitializer {
+public class TypingInChatClient implements ClientModInitializer {
 	private boolean chatOpen = false;
 	private boolean chatTyping = false;
 	private int tickCounter;
