@@ -1,31 +1,31 @@
 {
 	"schemaVersion": 1,
-	"id": "areyoutypingmod",
+	"id": "typinginchat",
 	"version": "${version}",
-	"name": "AreYouTypingMod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "TypingInChat",
+	"description": "Notify server when you are actively typing in chat",
 	"authors": [
-		"Me!"
+		"Orphey98"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/Orphey98",
+		"sources": "https://github.com/Orphey98/AreYouTypingMod"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/areyoutypingmod/icon.png",
+	"icon": "assets/typinginchat/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"me.orphey.AreYouTypingMod"
+			"me.orphey.TypingInChat"
 		],
 		"client": [
-			"me.orphey.AreYouTypingModClient"
+          "me.orphey.TypingInChatClient"
 		]
 	},
 	"mixins": [
-		"areyoutypingmod.mixins.json",
+		"typinginchat.mixins.json",
 		{
-			"config": "areyoutypingmod.client.mixins.json",
+			"config": "typinginchat.client.mixins.json",
 			"environment": "client"
 		}
 	],
