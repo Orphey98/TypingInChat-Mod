@@ -25,32 +25,28 @@ public class AreYouTypingModClient implements ClientModInitializer {
 			if (client.player == null) {
 				return;
 			}
+			tickCounter++;
 			Screen currentScreen = MinecraftClient.getInstance().currentScreen;
 			if (currentScreen instanceof ChatScreen chatScreen) {
-				tickCounter++;
 				// If the chat is open but we haven't detected it yet
 				if (!chatOpen) {
 					chatOpen = true;
 					chatTyping = true;
 					client.player.sendMessage(Text.of("Chat GUI opened!"));
-					//ChatStatusPacket.sendTypingStatus(true);
-					ModPacket.sendPacket((byte) 1);
+					ChatPacket.sendPacket((byte) 1);
 				}
 				if (tickCounter >= TICK_DELAY) {
 					if (!chatTyping && isTyping(chatScreen)) {
 						client.player.sendMessage(Text.of("Player is Typing"));
 						chatTyping = true;
-						//ChatStatusPacket.sendTypingStatus(true);
-						ModPacket.sendPacket((byte) 1);
+						ChatPacket.sendPacket((byte) 1);
 					} else if (chatTyping && !isTyping(chatScreen)){
 						client.player.sendMessage(Text.of("Player stopped typing"));
 						chatTyping = false;
-						//ChatStatusPacket.sendTypingStatus(false);
-						ModPacket.sendPacket((byte) 0);
+						ChatPacket.sendPacket((byte) 0);
 					}
 					tickCounter = 0;
 				}
-
 			} else {
 				// If the chat was open but now it's closed
 				if (chatOpen) {
@@ -59,8 +55,7 @@ public class AreYouTypingModClient implements ClientModInitializer {
 					client.player.sendMessage(Text.of("Chat GUI closed!"));
 					tickCounter = 0;
 					// Additional logic for when the chat GUI is closed
-					//ChatStatusPacket.sendTypingStatus(false);
-					ModPacket.sendPacket((byte) 0);
+					ChatPacket.sendPacket((byte) 0);
 				}
 			}
 		});
