@@ -3,9 +3,9 @@ package me.orphey;
 import io.wispforest.owo.config.annotation.Config;
 import io.wispforest.owo.config.annotation.Modmenu;
 
-@Modmenu(modId = "typinginchatmod")
+@Modmenu(modId = "typinginchat")
 @Config(name = "tcm-config", wrapperName = "TCMConfig")
 public class ConfigModel {
-    public boolean ignoreCommands = true;
-    public boolean ignoreChat = true;
+    public boolean enableMod = true;
+    public boolean hideCommands = true;
 }
