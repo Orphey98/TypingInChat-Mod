@@ -74,7 +74,7 @@ public class TypingInChatClient implements ClientModInitializer {
 	private boolean isTyping(ChatScreen chatScreen) {
 		ChatAccessor chatScreenAccessor = (ChatAccessor) chatScreen;
 		String chatText = chatScreenAccessor.getChatField().getText(); // Access chat field text
-		if (CONFIG.hideCommands() && isCommand(chatText)) {
+		if (CONFIG.showCommands() && isCommand(chatText)) {
 			return false;
 		}
 		if (chatText != null && !chatText.equals(chatTextBuf)) {
