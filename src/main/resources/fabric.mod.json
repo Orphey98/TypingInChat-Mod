@@ -2,8 +2,8 @@
 	"schemaVersion": 1,
 	"id": "typinginchat",
 	"version": "${version}",
-	"name": "TypingInChat",
-	"description": "Notify server when you are actively typing in chat",
+	"name": "Typing In Chat",
+	"description": "Notify server when you are actively typing in chat.",
 	"authors": [
 		"Orphey98"
 	],
