@@ -10,6 +10,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import java.util.List;
 
+import static me.orphey.TypingInChat.CONFIG;
+
 public class TypingInChatClient implements ClientModInitializer {
 	private boolean chatOpen = false;
 	private boolean chatTyping = false;
@@ -22,13 +24,16 @@ public class TypingInChatClient implements ClientModInitializer {
 		//ChatStatusPacket.register(); // C2S packet listener
 		// Register a tick event to monitor screen changes
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			if (!CONFIG.enableMod()) {
+				return;
+			}
 			if (client.player == null) {
 				return;
 			}
 			Screen currentScreen = MinecraftClient.getInstance().currentScreen;
 			if (currentScreen instanceof ChatScreen chatScreen) {
 				tickCounter++;
-				// If the chat is open but we haven't detected it yet
+				// If the chat is open and we haven't detected it yet
 				if (!chatOpen) {
 					chatOpen = true;
 					client.player.sendMessage(Text.of("Chat GUI opened!"));
@@ -69,6 +74,9 @@ public class TypingInChatClient implements ClientModInitializer {
 	private boolean isTyping(ChatScreen chatScreen) {
 		ChatAccessor chatScreenAccessor = (ChatAccessor) chatScreen;
 		String chatText = chatScreenAccessor.getChatField().getText(); // Access chat field text
+		if (CONFIG.hideCommands() && isCommand(chatText)) {
+			return false;
+		}
 		if (chatText != null && !chatText.equals(chatTextBuf)) {
 			chatTextBuf = chatText; // Update previous text length
 			return true;
@@ -76,5 +84,14 @@ public class TypingInChatClient implements ClientModInitializer {
 			return false;
 		}
 
+	}
+
+	private boolean isCommand(String chatText) {
+		if (chatText == null || chatText.isEmpty()) {
+			return false; // Null or empty strings cannot start with "/"
+		}
+		// Trim leading spaces and check the first character
+		String trimmedInput = chatText.trim();
+		return !trimmedInput.isEmpty() && trimmedInput.charAt(0) == '/';
 	}
 }
