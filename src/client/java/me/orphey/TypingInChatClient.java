@@ -14,8 +14,8 @@ public class TypingInChatClient implements ClientModInitializer {
 	private boolean chatOpen = false;
 	private boolean chatTyping = false;
 	private int tickCounter;
-	private static final int TICK_DELAY = 35;
-	private String chatTextBuf;
+	private static final int TICK_DELAY = 80;
+	private String chatTextBuf = "";
 
 	@Override
 	public void onInitializeClient() {
@@ -25,37 +25,35 @@ public class TypingInChatClient implements ClientModInitializer {
 			if (client.player == null) {
 				return;
 			}
-			tickCounter++;
 			Screen currentScreen = MinecraftClient.getInstance().currentScreen;
 			if (currentScreen instanceof ChatScreen chatScreen) {
+				tickCounter++;
 				// If the chat is open but we haven't detected it yet
 				if (!chatOpen) {
 					chatOpen = true;
-					chatTyping = true;
 					client.player.sendMessage(Text.of("Chat GUI opened!"));
+				}
+				if (!chatTyping && isTyping(chatScreen)) {
+					chatTyping = true;
 					ChatPacket.sendPacket((byte) 1);
+					client.player.sendMessage(Text.of("Player is Typing"));
 				}
 				if (tickCounter >= TICK_DELAY) {
-					if (!chatTyping && isTyping(chatScreen)) {
-						client.player.sendMessage(Text.of("Player is Typing"));
-						chatTyping = true;
-						ChatPacket.sendPacket((byte) 1);
-					} else if (chatTyping && !isTyping(chatScreen)){
-						client.player.sendMessage(Text.of("Player stopped typing"));
+					if (chatTyping && !isTyping(chatScreen)) {
 						chatTyping = false;
 						ChatPacket.sendPacket((byte) 0);
+						client.player.sendMessage(Text.of("Player stopped typing"));
 					}
 					tickCounter = 0;
 				}
 			} else {
-				// If the chat was open but now it's closed
 				if (chatOpen) {
 					chatOpen = false;
 					chatTyping = false;
-					client.player.sendMessage(Text.of("Chat GUI closed!"));
+					chatTextBuf = "";
 					tickCounter = 0;
-					// Additional logic for when the chat GUI is closed
 					ChatPacket.sendPacket((byte) 0);
+					client.player.sendMessage(Text.of("Chat GUI closed!"));
 				}
 			}
 		});
@@ -65,7 +63,7 @@ public class TypingInChatClient implements ClientModInitializer {
 		assert client.player != null;
 		List<PlayerEntity> nearbyPlayers = client.player.getWorld().getEntitiesByClass(
 				PlayerEntity.class, client.player.getBoundingBox().expand(32), p -> p != client.player);
-		return nearbyPlayers.isEmpty();
+		return !nearbyPlayers.isEmpty();
 	}
 
 	private boolean isTyping(ChatScreen chatScreen) {
