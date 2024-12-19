@@ -7,5 +7,5 @@ import io.wispforest.owo.config.annotation.Modmenu;
 @Config(name = "tcm-config", wrapperName = "TCMConfig")
 public class ConfigModel {
     public boolean enableMod = true;
-    public boolean hideCommands = true;
+    public boolean showCommands = true;
 }
