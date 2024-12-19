@@ -28,7 +28,7 @@ public class TypingInChatClient implements ClientModInitializer {
 			Screen currentScreen = MinecraftClient.getInstance().currentScreen;
 			if (currentScreen instanceof ChatScreen chatScreen) {
 				tickCounter++;
-				// If the chat is open but we haven't detected it yet
+				// If the chat is open and we haven't detected it yet
 				if (!chatOpen) {
 					chatOpen = true;
 					client.player.sendMessage(Text.of("Chat GUI opened!"));
