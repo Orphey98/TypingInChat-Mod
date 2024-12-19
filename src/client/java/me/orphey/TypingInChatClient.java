@@ -21,7 +21,6 @@ public class TypingInChatClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		//ChatStatusPacket.register(); // C2S packet listener
 		// Register a tick event to monitor screen changes
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (!CONFIG.enableMod()) {
@@ -31,23 +30,23 @@ public class TypingInChatClient implements ClientModInitializer {
 				return;
 			}
 			Screen currentScreen = MinecraftClient.getInstance().currentScreen;
-			if (currentScreen instanceof ChatScreen chatScreen) {
+			if (currentScreen instanceof ChatScreen chatScreen && playersNearby(client)) {
 				tickCounter++;
 				// If the chat is open and we haven't detected it yet
 				if (!chatOpen) {
 					chatOpen = true;
-					client.player.sendMessage(Text.of("Chat GUI opened!"));
+					//client.player.sendMessage(Text.of("Chat GUI opened!"));
 				}
 				if (!chatTyping && isTyping(chatScreen)) {
 					chatTyping = true;
 					ChatPacket.sendPacket((byte) 1);
-					client.player.sendMessage(Text.of("Player is Typing"));
+					//client.player.sendMessage(Text.of("Player is Typing"));
 				}
 				if (tickCounter >= TICK_DELAY) {
 					if (chatTyping && !isTyping(chatScreen)) {
 						chatTyping = false;
 						ChatPacket.sendPacket((byte) 0);
-						client.player.sendMessage(Text.of("Player stopped typing"));
+						//client.player.sendMessage(Text.of("Player stopped typing"));
 					}
 					tickCounter = 0;
 				}
@@ -58,7 +57,7 @@ public class TypingInChatClient implements ClientModInitializer {
 					chatTextBuf = "";
 					tickCounter = 0;
 					ChatPacket.sendPacket((byte) 0);
-					client.player.sendMessage(Text.of("Chat GUI closed!"));
+					//client.player.sendMessage(Text.of("Chat GUI closed!"));
 				}
 			}
 		});
@@ -67,14 +66,14 @@ public class TypingInChatClient implements ClientModInitializer {
 	private boolean playersNearby(MinecraftClient client) {
 		assert client.player != null;
 		List<PlayerEntity> nearbyPlayers = client.player.getWorld().getEntitiesByClass(
-				PlayerEntity.class, client.player.getBoundingBox().expand(32), p -> p != client.player);
+				PlayerEntity.class, client.player.getBoundingBox().expand(25), p -> p != client.player);
 		return !nearbyPlayers.isEmpty();
 	}
 
 	private boolean isTyping(ChatScreen chatScreen) {
 		ChatAccessor chatScreenAccessor = (ChatAccessor) chatScreen;
 		String chatText = chatScreenAccessor.getChatField().getText(); // Access chat field text
-		if (CONFIG.showCommands() && isCommand(chatText)) {
+		if (!CONFIG.showCommands() && isCommand(chatText)) {
 			return false;
 		}
 		if (chatText != null && !chatText.equals(chatTextBuf)) {
