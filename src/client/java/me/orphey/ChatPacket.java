@@ -7,7 +7,7 @@ import net.minecraft.util.Identifier;
 
 public class ChatPacket {
 
-    public static final Identifier CUSTOM_PAYLOAD_ID = new Identifier("aytm", "typing_status");
+    public static final Identifier CUSTOM_PAYLOAD_ID = new Identifier("ticm67896", "typing_status");
 
     public static void sendPacket(byte message) {
         // Create a PacketByteBuf to hold the data
