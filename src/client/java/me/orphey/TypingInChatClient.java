@@ -1,15 +1,20 @@
 package me.orphey;
 
+import com.mojang.brigadier.Command;
 import me.orphey.mixin.client.ChatAccessor;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
-import java.util.List;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.text.Text;
 
-import static me.orphey.TypingInChat.CONFIG;
+import java.nio.file.Path;
+import java.util.List;
 
 public class TypingInChatClient implements ClientModInitializer {
 	private boolean chatOpen = false;
@@ -20,33 +25,54 @@ public class TypingInChatClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		Path configDir = FabricLoader.getInstance().getConfigDir();
+		ConfigLoader.load(configDir);
+
+		// Register the reload command
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+			dispatcher.register(CommandManager.literal("typinginchatmod")
+					.then(CommandManager.literal("reload")
+							.executes(context -> {
+								ConfigLoader.getInstance().reload(configDir);
+								context.getSource().sendFeedback(Text.literal("Config reloaded!"), false);
+								return Command.SINGLE_SUCCESS;
+							}))
+			);
+		});
+
 		// Register a tick event to monitor screen changes
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if (!CONFIG.enableMod()) {
+			if (!ConfigLoader.getInstance().isEnableMod()) {
 				return;
 			}
 			if (client.player == null) {
 				return;
 			}
 			Screen currentScreen = MinecraftClient.getInstance().currentScreen;
-			if (currentScreen instanceof ChatScreen chatScreen && playersNearby(client)) {
+			if (currentScreen instanceof ChatScreen chatScreen) {
 				tickCounter++;
 				// If the chat is open and we haven't detected it yet
 				if (!chatOpen) {
 					chatOpen = true;
-					//client.player.sendMessage(Text.of("Chat GUI opened!"));
-				}
-				if (!chatTyping && isTyping(chatScreen)) {
+                    if (ConfigLoader.getInstance().isDebug()) {
+                        client.player.sendMessage(Text.of("Chat GUI opened!"));
+                    }
+                }
+				if (!chatTyping && isTyping(chatScreen) && playersNearby(client)) {
 					chatTyping = true;
 					ChatPacket.sendPacket((byte) 1);
-					//client.player.sendMessage(Text.of("Player is Typing"));
-				}
+                    if (ConfigLoader.getInstance().isDebug()) {
+                        client.player.sendMessage(Text.of("Player is Typing"));
+                    }
+                }
 				if (tickCounter >= TICK_DELAY) {
 					if (chatTyping && !isTyping(chatScreen)) {
 						chatTyping = false;
 						ChatPacket.sendPacket((byte) 0);
-						//client.player.sendMessage(Text.of("Player stopped typing"));
-					}
+                        if (ConfigLoader.getInstance().isDebug()) {
+                            client.player.sendMessage(Text.of("Player stopped typing"));
+                        }
+                    }
 					tickCounter = 0;
 				}
 			} else {
@@ -56,8 +82,10 @@ public class TypingInChatClient implements ClientModInitializer {
 					chatTextBuf = "";
 					tickCounter = 0;
 					ChatPacket.sendPacket((byte) 0);
-					//client.player.sendMessage(Text.of("Chat GUI closed!"));
-				}
+                    if (ConfigLoader.getInstance().isDebug()) {
+                        client.player.sendMessage(Text.of("Chat GUI closed!"));
+                    }
+                }
 			}
 		});
 	}
@@ -72,7 +100,7 @@ public class TypingInChatClient implements ClientModInitializer {
 	private boolean isTyping(ChatScreen chatScreen) {
 		ChatAccessor chatScreenAccessor = (ChatAccessor) chatScreen;
 		String chatText = chatScreenAccessor.getChatField().getText(); // Access chat field text
-		if (!CONFIG.showCommands() && isCommand(chatText)) {
+		if (ConfigLoader.getInstance().isIgnoreCommands() && isCommand(chatText)) {
 			return false;
 		}
 		if (chatText != null && !chatText.equals(chatTextBuf)) {
