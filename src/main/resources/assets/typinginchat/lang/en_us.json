@@ -1,7 +1,0 @@
-{
-  "text.config.tcm-config.title" : "TypingInChat Mod Options",
-  "text.config.tcm-config.option.enableMod" : "Enabled",
-  "text.config.tcm-config.option.enableMod.tooltip" : "Option to disable mod.",
-  "text.config.tcm-config.option.showCommands" : "Show commands",
-  "text.config.tcm-config.option.showCommands.tooltip" : "Whether commands input should\nbe visible on server."
-}
