@@ -1,7 +1,0 @@
-{
-  "text.config.tcm-config.title" : "TypingInChat Mod Options",
-  "text.config.tcm-config.option.enableMod" : "Включить мод",
-  "text.config.tcm-config.option.enableMod.tooltip" : "Возможность отключить мод при необходимости.",
-  "text.config.tcm-config.option.showCommands" : "Отображать команды",
-  "text.config.tcm-config.option.showCommands.tooltip" : "Ввод команд в чат так же отображается\nкак и обычный ввод текста."
-}

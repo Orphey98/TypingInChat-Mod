@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 public class TypingInChat implements ModInitializer {
 	public static final String MOD_ID = "typinginchatmod";
-	public static final me.orphey.TCMConfig CONFIG = me.orphey.TCMConfig.createAndLoad();
 
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
