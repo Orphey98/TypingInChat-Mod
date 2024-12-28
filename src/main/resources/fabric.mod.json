@@ -11,7 +11,7 @@
 		"homepage": "https://github.com/Orphey98",
 		"sources": "https://github.com/Orphey98/AreYouTypingMod"
 	},
-	"license": "CC0-1.0",
+	"license": "GPL-3.0",
 	"icon": "assets/typinginchat/icon.png",
 	"environment": "*",
 	"entrypoints": {
