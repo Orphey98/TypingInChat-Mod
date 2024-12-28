@@ -3,6 +3,7 @@ package me.orphey;
 import com.mojang.brigadier.Command;
 import me.orphey.mixin.client.ChatAccessor;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
@@ -29,13 +30,14 @@ public class TypingInChatClient implements ClientModInitializer {
 		ConfigLoader.load(configDir);
 
 		// Register the reload command
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-			dispatcher.register(CommandManager.literal("typinginchatmod")
-					.then(CommandManager.literal("reload")
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+			dispatcher.register(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("typinginchatmod")
+					.then(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("reload")
 							.executes(context -> {
-								ConfigLoader.getInstance().reload(configDir);
-								context.getSource().sendFeedback(Text.literal("Config reloaded!"), false);
-								return Command.SINGLE_SUCCESS;
+								// Reload the config
+								ConfigLoader.getInstance().reload(FabricLoader.getInstance().getConfigDir());
+								context.getSource().sendFeedback(Text.literal("[TypingInChat] Config reloaded (client-side)!"));
+								return 1;
 							}))
 			);
 		});
