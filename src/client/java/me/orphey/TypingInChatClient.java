@@ -17,8 +17,8 @@ import java.util.List;
 public class TypingInChatClient implements ClientModInitializer {
 	private boolean chatOpen = false;
 	private boolean chatTyping = false;
-	private int tickCounter;
-	private static final int TICK_DELAY = 80;
+	private int stoppedTypingCounter;
+	private static final int STOPPED_TYPING_DELAY = 80;
 	private String chatTextBuf = "";
 
 	@Override
@@ -27,66 +27,93 @@ public class TypingInChatClient implements ClientModInitializer {
 		ConfigLoader.load(configDir);
 
 		// Register the reload command
-		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-			dispatcher.register(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("typinginchatmod")
-					.then(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("reload")
-							.executes(context -> {
-								// Reload the config
-								ConfigLoader.getInstance().reload(FabricLoader.getInstance().getConfigDir());
-								context.getSource().sendFeedback(Text.literal("[TypingInChat] Config reloaded (client-side)!"));
-								return 1;
-							}))
-			);
-		});
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess)
+				-> dispatcher.register(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("typinginchatmod")
+				.then(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("reload")
+						.executes(context -> {
+							// Reload the config
+							ConfigLoader.getInstance().reload(FabricLoader.getInstance().getConfigDir());
+							context.getSource().sendFeedback(Text.literal("[TypingInChat] Config reloaded (client-side)!"));
+							return 1;
+						}))
+		));
 
 		// Register a tick event to monitor screen changes
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if (!ConfigLoader.getInstance().isEnableMod()) {
-				return;
-			}
-			if (client.player == null) {
+			if (!ConfigLoader.getInstance().isEnableMod() || client.player == null) {
 				return;
 			}
 			Screen currentScreen = MinecraftClient.getInstance().currentScreen;
-			if (currentScreen instanceof ChatScreen chatScreen) {
-				tickCounter++;
-				// If the chat is open and we haven't detected it yet
-				if (!chatOpen) {
-					chatOpen = true;
-                    if (ConfigLoader.getInstance().isDebug()) {
-                        client.player.sendMessage(Text.of("Chat GUI opened!"));
-                    }
-                }
-				if (!chatTyping && isTyping(chatScreen) && playersNearby(client)) {
-					chatTyping = true;
-					ChatPacket.sendPacket((byte) 1);
-                    if (ConfigLoader.getInstance().isDebug()) {
-                        client.player.sendMessage(Text.of("Player is Typing"));
-                    }
-                }
-				if (tickCounter >= TICK_DELAY) {
-					if (chatTyping && !isTyping(chatScreen)) {
-						chatTyping = false;
-						ChatPacket.sendPacket((byte) 0);
-                        if (ConfigLoader.getInstance().isDebug()) {
-                            client.player.sendMessage(Text.of("Player stopped typing"));
-                        }
-                    }
-					tickCounter = 0;
-				}
+			if (currentScreen instanceof ChatScreen) {
+				handleChatScreen();
 			} else {
-				if (chatOpen) {
-					chatOpen = false;
-					chatTyping = false;
-					chatTextBuf = "";
-					tickCounter = 0;
-					ChatPacket.sendPacket((byte) 0);
-                    if (ConfigLoader.getInstance().isDebug()) {
-                        client.player.sendMessage(Text.of("Chat GUI closed!"));
-                    }
-                }
+				handleScreenClose();
 			}
 		});
+	}
+	private void handleChatScreen() {
+		if (!chatOpen) {
+			onChatOpen();
+		}
+		boolean currentlyTyping = isTyping((ChatScreen) MinecraftClient.getInstance().currentScreen);
+		if (currentlyTyping && playersNearby(MinecraftClient.getInstance())) {
+			onTyping();
+		}
+		// Increment stoppedTypingCounter if the player isn't typing
+		if (!currentlyTyping) {
+			stoppedTypingCounter++;
+		} else {
+			// Reset the stoppedTypingCounter if the player is typing
+			stoppedTypingCounter = 0;
+		}
+		if (stoppedTypingCounter >= STOPPED_TYPING_DELAY) {
+			handleStoppedTyping();
+		}
+	}
+
+	private void onChatOpen() {
+		chatOpen = true;
+		if (ConfigLoader.getInstance().isDebug()) {
+            assert MinecraftClient.getInstance().player != null;
+            MinecraftClient.getInstance().player.sendMessage(Text.of("Chat GUI opened!"));
+		}
+	}
+
+	private void onTyping() {
+		if (!chatTyping) {
+			chatTyping = true;
+			ChatPacket.sendPacket((byte) 1);
+			if (ConfigLoader.getInstance().isDebug()) {
+                assert MinecraftClient.getInstance().player != null;
+                MinecraftClient.getInstance().player.sendMessage(Text.of("Player is Typing"));
+			}
+		}
+	}
+
+	private void handleStoppedTyping() {
+		if (chatTyping) {
+			chatTyping = false;
+			stoppedTypingCounter = 0; // Reset the counter after handling
+			ChatPacket.sendPacket((byte) 0);
+			if (ConfigLoader.getInstance().isDebug()) {
+                assert MinecraftClient.getInstance().player != null;
+                MinecraftClient.getInstance().player.sendMessage(Text.of("Player stopped typing"));
+			}
+		}
+	}
+
+	private void handleScreenClose() {
+		if (chatOpen) {
+			chatOpen = false;
+			chatTyping = false;
+			chatTextBuf = "";
+			stoppedTypingCounter = 0; // Reset stopped typing logic
+			ChatPacket.sendPacket((byte) 0);
+			if (ConfigLoader.getInstance().isDebug()) {
+                assert MinecraftClient.getInstance().player != null;
+                MinecraftClient.getInstance().player.sendMessage(Text.of("Chat GUI closed!"));
+			}
+		}
 	}
 
 	private boolean playersNearby(MinecraftClient client) {
