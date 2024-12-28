@@ -5,19 +5,21 @@ Client-side part for [TypingInChat-Plugin](https://github.com/Orphey98/TypingInC
 
 ## Installation
 You need to put typinginchat-fabric.jar into your mods folder. Also, you need to install [Fabric API](https://modrinth.com/mod/fabric-api). <br>
-Mod depends on [owo-lib](https://modrinth.com/mod/owo-lib) and you will be prompted to install correct version automaticly on mod first run.
 
 ## Options
-Mod creates small config file that you can edit. Integrated with [Mod Menu](https://modrinth.com/mod/modmenu).
+Mod creates small config file that you can edit.
 
 ```yml
-tcm-config.json5
+config/typinginchat-config.json
 
 #You can disable mod if you have problems on certain servers
 "enableMod": true
 #Should commands input be ignored or not
-"showCommands": true
+"ignoreCommands": true
+#Enable debug-mode. Shows when plugin detects chat activity and players nearby.
+"debug": false
 ```
+Config values can be updated with _/typinginchatmod reload_ command.
 
 ## Related
 Link for server-side plugin 
