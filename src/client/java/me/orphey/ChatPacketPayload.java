@@ -13,7 +13,7 @@ public record ChatPacketPayload(boolean isTyping) implements CustomPayload {
     // Define the codec for encoding and decoding the packet
     public static final PacketCodec<RegistryByteBuf, ChatPacketPayload> CODEC =
             PacketCodec.tuple(
-                    PacketCodecs.BOOL, // Use the built-in codec for booleans
+                    PacketCodecs.BOOLEAN, // Use the built-in codec for booleans
                     ChatPacketPayload::isTyping, // How to extract the field
                     ChatPacketPayload::new // How to create the payload object
             );
