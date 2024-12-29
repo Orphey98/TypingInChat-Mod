@@ -78,7 +78,7 @@ public class TypingInChatClient implements ClientModInitializer {
 		chatOpen = true;
 		if (ConfigLoader.getInstance().isDebug()) {
             assert MinecraftClient.getInstance().player != null;
-            MinecraftClient.getInstance().player.sendMessage(Text.of("Chat GUI opened!"));
+            MinecraftClient.getInstance().player.sendMessage(Text.of("Chat GUI opened!"), false);
 		}
 	}
 
@@ -88,7 +88,7 @@ public class TypingInChatClient implements ClientModInitializer {
 			ChatPacket.sendPacket(true);
 			if (ConfigLoader.getInstance().isDebug()) {
                 assert MinecraftClient.getInstance().player != null;
-                MinecraftClient.getInstance().player.sendMessage(Text.of("Player is Typing"));
+                MinecraftClient.getInstance().player.sendMessage(Text.of("Player is Typing"), false);
 			}
 		}
 	}
@@ -100,7 +100,7 @@ public class TypingInChatClient implements ClientModInitializer {
 			ChatPacket.sendPacket(false);
 			if (ConfigLoader.getInstance().isDebug()) {
                 assert MinecraftClient.getInstance().player != null;
-                MinecraftClient.getInstance().player.sendMessage(Text.of("Player stopped typing"));
+                MinecraftClient.getInstance().player.sendMessage(Text.of("Player stopped typing"), false);
 			}
 		}
 	}
@@ -114,7 +114,7 @@ public class TypingInChatClient implements ClientModInitializer {
 			ChatPacket.sendPacket(false);
 			if (ConfigLoader.getInstance().isDebug()) {
                 assert MinecraftClient.getInstance().player != null;
-                MinecraftClient.getInstance().player.sendMessage(Text.of("Chat GUI closed!"));
+                MinecraftClient.getInstance().player.sendMessage(Text.of("Chat GUI closed!"), false);
 			}
 		}
 	}
