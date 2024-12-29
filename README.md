@@ -4,8 +4,9 @@ Client-side part for [TypingInChat-Plugin](https://github.com/Orphey98/TypingInC
 ![demo1](https://github.com/user-attachments/assets/ee3bb3ba-be4f-4c08-ab99-f4925e1140a0)
 
 ## Installation
+**Only Fabric mod loader supported at the moment.**
 
-|  | Download appropriate version for your client |
+|  | Download appropriate version for your Fabric client |
 | ------ | ------ |
 | 1.19 | [1.19.4](https://github.com/Orphey98/TypingInChat-Mod/releases/download/1.19/typinginchat-fabric-1.19.4-1.0.0.jar) |
 | 1.20 | [1.20](https://github.com/Orphey98/TypingInChat-Mod/releases/download/1.20/typinginchat-fabric-1.20-1.0.0.jar), [1.20.1](https://github.com/Orphey98/TypingInChat-Mod/releases/download/1.20.1/typinginchat-fabric-1.20.1-1.0.0.jar), [1.20.2](https://github.com/Orphey98/TypingInChat-Mod/releases/download/1.20.2/typinginchat-fabric-1.20.2-1.0.0.jar), [1.20.3](https://github.com/Orphey98/TypingInChat-Mod/releases/download/1.20.3/typinginchat-fabric-1.20.3-1.0.0.jar), [1.20.4](https://github.com/Orphey98/TypingInChat-Mod/releases/download/1.20.4/typinginchat-fabric-1.20.4-1.0.0.jar), [1.20.5](https://github.com/Orphey98/TypingInChat-Mod/releases/download/1.20.5/typinginchat-fabric-1.20.5-1.0.0.jar), [1.20.6](https://github.com/Orphey98/TypingInChat-Mod/releases/download/1.20.6/typinginchat-fabric-1.20.6-1.0.0.jar) |
