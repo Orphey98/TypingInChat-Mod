@@ -1,21 +1,16 @@
 package me.orphey;
 
-import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 
 public class ChatPacket {
     private ChatPacket() {}
 
-    public static final Identifier CUSTOM_PAYLOAD_ID = new Identifier("typinginchatmod", "typing_status");
-
-    public static void sendPacket(byte message) {
-        // Create a PacketByteBuf to hold the data
-        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        // Write data into the buffer
-        buf.writeByte(message);
-        // Send the packet to the server
-        ClientPlayNetworking.send(CUSTOM_PAYLOAD_ID, buf);
+    public static void register() {
+        // Register the payload type for client-to-server communication
+        PayloadTypeRegistry.playC2S().register(ChatPacketPayload.PAYLOAD_ID, ChatPacketPayload.CODEC);
+    }
+    public static void sendPacket(boolean isTyping) {
+        ClientPlayNetworking.send(new ChatPacketPayload(isTyping));
     }
 }

@@ -23,8 +23,11 @@ public class TypingInChatClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		// Config initial load
 		Path configDir = FabricLoader.getInstance().getConfigDir();
 		ConfigLoader.load(configDir);
+		// Packet registration
+		ChatPacket.register();
 
 		// Register the reload command
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess)
@@ -82,7 +85,7 @@ public class TypingInChatClient implements ClientModInitializer {
 	private void onTyping() {
 		if (!chatTyping) {
 			chatTyping = true;
-			ChatPacket.sendPacket((byte) 1);
+			ChatPacket.sendPacket(true);
 			if (ConfigLoader.getInstance().isDebug()) {
                 assert MinecraftClient.getInstance().player != null;
                 MinecraftClient.getInstance().player.sendMessage(Text.of("Player is Typing"));
@@ -94,7 +97,7 @@ public class TypingInChatClient implements ClientModInitializer {
 		if (chatTyping) {
 			chatTyping = false;
 			stoppedTypingCounter = 0; // Reset the counter after handling
-			ChatPacket.sendPacket((byte) 0);
+			ChatPacket.sendPacket(false);
 			if (ConfigLoader.getInstance().isDebug()) {
                 assert MinecraftClient.getInstance().player != null;
                 MinecraftClient.getInstance().player.sendMessage(Text.of("Player stopped typing"));
@@ -108,7 +111,7 @@ public class TypingInChatClient implements ClientModInitializer {
 			chatTyping = false;
 			chatTextBuf = "";
 			stoppedTypingCounter = 0; // Reset stopped typing logic
-			ChatPacket.sendPacket((byte) 0);
+			ChatPacket.sendPacket(false);
 			if (ConfigLoader.getInstance().isDebug()) {
                 assert MinecraftClient.getInstance().player != null;
                 MinecraftClient.getInstance().player.sendMessage(Text.of("Chat GUI closed!"));
