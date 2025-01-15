@@ -4,7 +4,8 @@ Client-side part for [TypingInChat-Plugin](https://github.com/Orphey98/TypingInC
 ![demo1](https://github.com/user-attachments/assets/ee3bb3ba-be4f-4c08-ab99-f4925e1140a0)
 
 ## Installation
-**Only Fabric mod loader supported at the moment.**
+**This is Fabric repository.** </br>
+For Forge version go [HERE](https://github.com/Orphey98/TypingInChat-Mod-Forge)
 
 |  | Download appropriate version for your Fabric client |
 | ------ | ------ |
